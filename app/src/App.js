@@ -1,6 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Task from './Task';
+import styled from 'styled-components';
+import './root.css';
+
+const Container = styled.div`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	height: calc(100vh - 3em);
+	width: 100vw;
+	background-color: lightgrey;
+	text-align: center;
+	padding-top: 3em;
+	overflow: scroll;
+`;
 
 const App = () => {
 	const [tasks, setTasks] = useState(
@@ -37,7 +51,7 @@ const App = () => {
 	};
 
 	return (
-		<div>
+		<Container>
 			<form onSubmit={(e) => handleAddTask(e)}>
 				<input
 					type="text"
@@ -46,7 +60,7 @@ const App = () => {
 				/>
 				<button type="submit">Add</button>
 			</form>
-			<ul>
+			<div>
 				{tasks.map((t) => {
 					return (
 						<Task
@@ -57,8 +71,8 @@ const App = () => {
 						/>
 					);
 				})}
-			</ul>
-		</div>
+			</div>
+		</Container>
 	);
 };
 
