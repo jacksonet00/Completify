@@ -27,13 +27,13 @@ const App = () => {
 		if (taskInput !== '') {
 			const d = new Date();
 			setTasks([
-				...tasks,
 				{
 					name: taskInput,
 					completed: false,
 					id: uuidv4(),
 					time: d.getTime(),
 				},
+				...tasks,
 			]);
 			setTaskInput('');
 		}
@@ -80,6 +80,35 @@ const App = () => {
 		setTasks(newTasks);
 	};
 
+	const reorder = (taskList, startIndex, endIndex) => {
+		const result = Array.from(taskList);
+		const [removed] = result.splice(startIndex, 1);
+		result.splice(endIndex, 0, removed);
+
+		return result;
+	};
+
+	const onDragEnd = (result) => {
+		// Dropped outside of list.
+		if (!result.destination) return;
+		const newTasks = reorder(
+			tasks,
+			result.source.index,
+			result.destination.index
+		);
+		setTasks(newTasks);
+	};
+
+	const getItemStyle = (isDragging, draggableStyle) => ({
+		userSelect: 'none',
+		padding: '0.1em',
+		...draggableStyle,
+	});
+
+	const getListStyle = (isDraggingOver) => ({
+		padding: '0.1em',
+	});
+
 	return (
 		<Container>
 			<Title>Completify</Title>
@@ -93,18 +122,55 @@ const App = () => {
 					Add
 				</AddButton>
 			</form>
-			<div>
-				{tasks.map((t) => {
-					return (
-						<Task
-							key={t.id}
-							task={t}
-							onComplete={(id) => handleCompleteTask(id)}
-							onDelete={(id) => handleDeleteTask(id)}
-						/>
-					);
-				})}
-			</div>
+			<DragDropContext onDragEnd={onDragEnd}>
+				<Droppable droppableId="droppable">
+					{(provided, snapshot) => (
+						<div
+							{...provided.droppableProps}
+							ref={provided.innerRef}
+							style={getListStyle(snapshot.isDraggingOver)}
+						>
+							{tasks.map((t, index) => (
+								<Draggable
+									key={t.id}
+									draggableId={t.id}
+									index={index}
+								>
+									{(provided, snapshot) => (
+										<div
+											ref={provided.innerRef}
+											{...provided.draggableProps}
+											{...provided.dragHandleProps}
+											style={getItemStyle(
+												snapshot.isDragging,
+												provided
+													.draggableProps
+													.style
+											)}
+										>
+											<Task
+												key={t.id}
+												task={t}
+												onComplete={(id) =>
+													handleCompleteTask(
+														id
+													)
+												}
+												onDelete={(id) =>
+													handleDeleteTask(
+														id
+													)
+												}
+											/>
+										</div>
+									)}
+								</Draggable>
+							))}
+							{provided.placeholder}
+						</div>
+					)}
+				</Droppable>
+			</DragDropContext>
 			<div>
 				<input
 					type="checkbox"

@@ -21,7 +21,7 @@ const HStack = styled.div`
 	align-items: center;
 `;
 
-const Title = styled.h3`
+const Title = styled.label`
 	color: black;
 	padding-left: 1em;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
@@ -43,11 +43,13 @@ const Task = (props) => {
 			<HStack>
 				<TaskCheckbox
 					type="checkbox"
+					id={`checkbox-${props.task.id}`}
 					checked={props.task.completed}
 					onChange={() => props.onComplete(props.task.id)}
 				/>
-				{/* TODO: Edit task name on click. */}
-				<Title>{props.task.name}</Title>
+				<Title htmlFor={`checkbox-${props.task.id}`}>
+					{props.task.name}
+				</Title>
 			</HStack>
 			<DeleteButton onClick={() => props.onDelete(props.task.id)}>
 				x
