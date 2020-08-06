@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
+// TODO: Media queries for mobile.
 const Container = styled.div`
 	background-color: #e2e2e2;
 	box-shadow: 12px 12px 16px 0 rgba(0, 0, 0, 0.25),
@@ -11,7 +12,7 @@ const Container = styled.div`
 	align-items: center;
 	border-radius: 2em;
 	padding: 1em;
-	width: 25em;
+	min-width: 25em;
 	margin: 2em;
 `;
 
@@ -23,24 +24,34 @@ const HStack = styled.div`
 const Title = styled.h3`
 	color: black;
 	padding-left: 1em;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+		Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 `;
 
-const TaskInput = styled.input`
+const TaskCheckbox = styled.input`
 	color: black;
+	margin-left: 1em;
+`;
+
+const DeleteButton = styled.button`
+	margin-right: 1em;
 `;
 
 const Task = (props) => {
 	return (
 		<Container>
 			<HStack>
-				<TaskInput
+				<TaskCheckbox
 					type="checkbox"
 					checked={props.task.completed}
 					onChange={() => props.onComplete(props.task.id)}
 				/>
+				{/* TODO: Edit task name on click. */}
 				<Title>{props.task.name}</Title>
 			</HStack>
-			<button onClick={() => props.onDelete(props.task.id)}>x</button>
+			<DeleteButton onClick={() => props.onDelete(props.task.id)}>
+				x
+			</DeleteButton>
 		</Container>
 	);
 };
