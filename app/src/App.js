@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { v4 as uuidv4 } from 'uuid';
 import Task from './components/Task';
+import SettingsPane from './components/SettingsPane';
 import {
 	AppContainer,
 	AppName,
@@ -19,6 +20,7 @@ const App = () => {
 	const [taskInput, setTaskInput] = useState('');
 	const [autoSort, setAutoSort] = useState(true);
 	const [addFromTop, setAddFromTop] = useState(true);
+	const [showSettings, setShowSettings] = useState(false);
 
 	//== Effect ==\\
 
@@ -148,8 +150,26 @@ const App = () => {
 
 	//== Render ==\\
 
+	const renderSettings = () => {
+		if (showSettings) {
+			return (
+				<SettingsPane
+					onToggle={(t) => toggleAutoSort()}
+					onSortDirection={(s) =>
+						setAddFromTop(s === 'top' ? true : false)
+					}
+				/>
+			);
+		}
+		return <></>;
+	};
+
 	return (
 		<AppContainer>
+			<button onClick={() => setShowSettings(!showSettings)}>
+				Settings
+			</button>
+			{renderSettings()}
 			<AppName>Completify</AppName>
 			<form onSubmit={(e) => handleAddTask(e)}>
 				<TaskInput
@@ -210,26 +230,6 @@ const App = () => {
 					)}
 				</Droppable>
 			</DragDropContext>
-			<div>
-				<input
-					type="checkbox"
-					name="auto-sort"
-					id="auto-sort"
-					checked={autoSort}
-					onChange={() => toggleAutoSort()}
-				/>
-				<label htmlFor="auto-sort">Auto Sort</label>
-				<select
-					onChange={(e) =>
-						setAddFromTop(
-							e.target.value === 'top' ? true : false
-						)
-					}
-				>
-					<option value="top">Top</option>
-					<option value="bottom">Bottom</option>
-				</select>
-			</div>
 		</AppContainer>
 	);
 };
