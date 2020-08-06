@@ -8,6 +8,7 @@ import {
 	AppName,
 	TaskInput,
 	AddTaskButton,
+	TitleGrid,
 } from './components/styledComponents';
 import './styles/root.css';
 
@@ -23,10 +24,6 @@ const App = () => {
 	const [showSettings, setShowSettings] = useState(false);
 
 	//== Effect ==\\
-
-	useEffect(() => {
-		localStorage.setItem('tasks', JSON.stringify(tasks));
-	}, [tasks]);
 
 	useEffect(() => {
 		document.getElementById('add-btn').addEventListener('focus', (e) => {
@@ -166,11 +163,31 @@ const App = () => {
 
 	return (
 		<AppContainer>
-			<button onClick={() => setShowSettings(!showSettings)}>
-				Settings
-			</button>
-			{renderSettings()}
-			<AppName>Completify</AppName>
+			<TitleGrid>
+				<AppName
+					style={{ gridColumnStart: '2', gridColumnEnd: '2' }}
+				>
+					Completify
+				</AppName>
+				<div
+					style={{
+						gridColumnStart: '4',
+						gridColumnEnd: '4',
+						display: 'grid',
+						gridTemplate: '1fr 2fr / 1fr',
+					}}
+				>
+					<button
+						onClick={() => setShowSettings(!showSettings)}
+						style={{
+							gridRowStart: '1',
+							gridRowEnd: '1',
+						}}
+					>
+						s
+					</button>
+				</div>
+			</TitleGrid>
 			<form onSubmit={(e) => handleAddTask(e)}>
 				<TaskInput
 					type="text"
@@ -181,6 +198,8 @@ const App = () => {
 					Add
 				</AddTaskButton>
 			</form>
+			{renderSettings()}
+
 			<DragDropContext onDragEnd={onDragEnd}>
 				<Droppable droppableId="droppable">
 					{(provided, snapshot) => (

@@ -97,6 +97,11 @@ const TaskCheckbox = styled.input`
 	margin-left: 1em;
 `;
 
+const TitleGrid = styled.div`
+	display: grid;
+	grid-template: 1fr / 1fr 2fr 1fr;
+`;
+
 export {
 	AppContainer,
 	AppName,
@@ -107,4 +112,5 @@ export {
 	HStack,
 	TaskName,
 	TaskCheckbox,
+	TitleGrid,
 };
