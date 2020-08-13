@@ -41,9 +41,11 @@ const App = () => {
 		e.preventDefault();
 
 		const getIndex = (taskList) => {
-			taskList.forEach((task, index) => {
-				if (task.completed) return index;
-			});
+			for (let i = 0; i < taskList.length; i++) {
+				if (taskList[i].completed) {
+					return i;
+				}
+			}
 			return taskList.length;
 		};
 
@@ -57,6 +59,7 @@ const App = () => {
 			setTasks([newTask, ...tasks]);
 		}
 		if (addFrom === 'bottom') {
+			console.log(getIndex(tasks));
 			let newTasks = [...tasks];
 			newTasks.splice(getIndex(newTasks), 0, newTask);
 			setTasks(newTasks);
@@ -139,28 +142,27 @@ const App = () => {
 	return (
 		<AppContainer>
 			<TitleGrid>
-				<AppName
-					style={{ gridColumnStart: '2', gridColumnEnd: '2' }}
-				>
+				<AppName style={{ gridColumn: '2 / 2' }}>
 					Completify
 				</AppName>
 				<div
 					style={{
-						gridColumnStart: '4',
-						gridColumnEnd: '4',
+						gridColumn: '4 / 4',
 						display: 'grid',
 						gridTemplate: '1fr 2fr / 1fr',
 					}}
 				>
-					<button
-						onClick={() => setShowSettings(!showSettings)}
+					<img
+						src="https://i.postimg.cc/RFjTD51G/settings-Cog.png"
+						alt="settings icon"
 						style={{
-							gridRowStart: '1',
-							gridRowEnd: '1',
+							gridRow: '1 / 1',
+							width: '2.5em',
+							height: '2.5em',
+							marginBottom: '-1em',
 						}}
-					>
-						s
-					</button>
+						onClick={() => setShowSettings(!showSettings)}
+					/>
 				</div>
 			</TitleGrid>
 			<form onSubmit={(e) => handleAddTask(e)}>
