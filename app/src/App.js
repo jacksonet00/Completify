@@ -20,7 +20,7 @@ const App = () => {
 	);
 	const [taskInput, setTaskInput] = useState('');
 	const [autoSort, setAutoSort] = useState(true);
-	const [addFromTop, setAddFromTop] = useState(true);
+	const [addFrom, setAddFrom] = useState('bottom');
 	const [showSettings, setShowSettings] = useState(false);
 
 	//== Effect ==\\
@@ -31,67 +31,53 @@ const App = () => {
 		});
 	}, []);
 
+	useEffect(() => {
+		localStorage.setItem('tasks', JSON.stringify(tasks));
+	}, [tasks]);
+
 	//== Event Handlers ==\\
 
 	const handleAddTask = (e) => {
 		e.preventDefault();
 
-		if (taskInput !== '') {
-			const d = new Date();
-			const newTasks = [...tasks];
-			newTasks.splice(getFirstCompletedIndex(newTasks), 0, {
-				name: taskInput,
-				completed: false,
-				id: uuidv4(),
-				time: d.getTime(),
+		const getIndex = (taskList) => {
+			taskList.forEach((task, index) => {
+				if (task.completed) return index;
 			});
+			return taskList.length;
+		};
 
-			addFromTop
-				? setTasks([
-						{
-							name: taskInput,
-							completed: false,
-							id: uuidv4(),
-							time: d.getTime(),
-						},
-						...tasks,
-				  ])
-				: setTasks(newTasks);
-
-			setTaskInput('');
+		if (taskInput === '') return;
+		const newTask = {
+			name: taskInput,
+			completed: false,
+			id: uuidv4(),
+		};
+		if (addFrom === 'top') {
+			setTasks([newTask, ...tasks]);
 		}
+		if (addFrom === 'bottom') {
+			let newTasks = [...tasks];
+			newTasks.splice(getIndex(newTasks), 0, newTask);
+			setTasks(newTasks);
+		}
+		setTaskInput('');
 	};
 
 	const handleCompleteTask = (id) => {
-		const newTasks = [...tasks];
-		newTasks.forEach((t) => {
-			if (t.id === id) {
-				t.completed = !t.completed;
+		let newTasks = [...tasks];
+		newTasks.forEach((task) => {
+			if (task.id === id) {
+				task.completed = !task.completed;
 			}
 		});
-		// TODO: Animate sorting.
-		// TODO: Sort subsections by date.
+		setTasks(newTasks);
+		sortTasks();
+	};
+
+	const sortTasks = () => {
+		let newTasks = [...tasks];
 		if (autoSort) {
-			newTasks.sort((a, b) => {
-				return a.completed === b.completed
-					? 0
-					: a.completed
-					? 1
-					: -1;
-			});
-		}
-		setTasks(newTasks);
-	};
-
-	const handleDeleteTask = (id) => {
-		const newTasks = tasks.filter((t) => t.id !== id);
-		setTasks(newTasks);
-	};
-
-	const toggleAutoSort = () => {
-		setAutoSort(!autoSort);
-		const newTasks = [...tasks];
-		if (!autoSort) {
 			newTasks.sort((a, b) => {
 				return a.completed === b.completed
 					? 0
@@ -134,26 +120,15 @@ const App = () => {
 		padding: '0.001em',
 	});
 
-	//== Computed Values ==\\
-
-	const getFirstCompletedIndex = (taskList) => {
-		taskList.forEach((t, index) => {
-			if (t.completed) {
-				return index;
-			}
-		});
-		return -1;
-	};
-
 	//== Render ==\\
 
 	const renderSettings = () => {
 		if (showSettings) {
 			return (
 				<SettingsPane
-					onToggle={(t) => toggleAutoSort()}
+					onToggle={() => setAutoSort(!autoSort)}
 					onSortDirection={(s) =>
-						setAddFromTop(s === 'top' ? true : false)
+						setAddFrom(s === 'top' ? 'top' : 'bottom')
 					}
 				/>
 			);
@@ -235,8 +210,14 @@ const App = () => {
 													)
 												}
 												onDelete={(id) =>
-													handleDeleteTask(
-														id
+													setTasks(
+														tasks.filter(
+															(
+																t
+															) =>
+																t.id !==
+																id
+														)
 													)
 												}
 											/>
