@@ -1,30 +1,32 @@
 import React from 'react';
-import {
-	TaskContainer,
-	HStack,
-	TaskName,
-	TaskCheckbox,
-	DeleteTaskButton,
-} from './styledComponents';
+import HStack from './HStack';
+import '../styles/task.css';
 
 const Task = (props) => {
 	return (
-		<TaskContainer>
+		<div className="task-container">
 			<HStack>
-				<TaskCheckbox
+				<input
+					className="task-chkbx"
 					type="checkbox"
 					id={`checkbox-${props.task.id}`}
 					checked={props.task.completed}
 					onChange={() => props.onComplete(props.task.id)}
 				/>
-				<TaskName htmlFor={`checkbox-${props.task.id}`}>
+				<label
+					className="task-name"
+					htmlFor={`checkbox-${props.task.id}`}
+				>
 					{props.task.name}
-				</TaskName>
+				</label>
 			</HStack>
-			<DeleteTaskButton onClick={() => props.onDelete(props.task.id)}>
+			<button
+				className="delete-btn"
+				onClick={() => props.onDelete(props.task.id)}
+			>
 				x
-			</DeleteTaskButton>
-		</TaskContainer>
+			</button>
+		</div>
 	);
 };
 

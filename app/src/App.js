@@ -1,16 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { v4 as uuidv4 } from 'uuid';
 import Task from './components/Task';
 import SettingsPane from './components/SettingsPane';
-import {
-	AppContainer,
-	AppName,
-	TaskInput,
-	AddTaskButton,
-	TitleGrid,
-} from './components/styledComponents';
+import { v4 as uuidv4 } from 'uuid';
 import './styles/root.css';
+import './styles/app.css';
 
 const App = () => {
 	//== State ==\\
@@ -59,7 +53,6 @@ const App = () => {
 			setTasks([newTask, ...tasks]);
 		}
 		if (addFrom === 'bottom') {
-			console.log(getIndex(tasks));
 			let newTasks = [...tasks];
 			newTasks.splice(getIndex(newTasks), 0, newTask);
 			setTasks(newTasks);
@@ -143,42 +136,71 @@ const App = () => {
 		return <></>;
 	};
 
+	const renderTasks = () => {
+		return tasks.map((t, index) => (
+			<Draggable key={t.id} draggableId={t.id} index={index}>
+				{(provided, snapshot) => (
+					<div
+						ref={provided.innerRef}
+						{...provided.draggableProps}
+						{...provided.dragHandleProps}
+						style={getItemStyle(
+							snapshot.isDragging,
+							provided.draggableProps.style
+						)}
+					>
+						<Task
+							key={t.id}
+							task={t}
+							onComplete={(id) => handleCompleteTask(id)}
+							onDelete={(id) =>
+								setTasks(
+									tasks.filter((t) => t.id !== id)
+								)
+							}
+						/>
+					</div>
+				)}
+			</Draggable>
+		));
+	};
+
+	const renderInput = () => {
+		return (
+			<>
+				<form onSubmit={(e) => handleAddTask(e)}>
+					<input
+						className="task-input"
+						type="text"
+						value={taskInput}
+						onChange={(e) => setTaskInput(e.target.value)}
+					/>
+					<button
+						className="add-task-btn"
+						type="submit"
+						id="add-btn"
+					>
+						Add
+					</button>
+				</form>
+			</>
+		);
+	};
+
 	return (
-		<AppContainer>
-			<TitleGrid>
-				<AppName style={{ gridColumn: '2 / 2' }}>
-					Completify
-				</AppName>
-				<div
-					style={{
-						gridColumn: '4 / 4',
-						display: 'grid',
-						gridTemplate: '1fr 2fr / 1fr',
-					}}
-				>
+		<div className="app-container">
+			<div className="title-grid">
+				<h1 className="app-name">Completify</h1>
+				<div className="settings-icon-container">
 					<img
+						className="settings-icon"
 						src="https://i.postimg.cc/RFjTD51G/settings-Cog.png"
 						alt="settings icon"
-						style={{
-							gridRow: '1 / 1',
-							width: '2.5em',
-							height: '2.5em',
-							marginBottom: '-1em',
-						}}
 						onClick={() => setShowSettings(!showSettings)}
 					/>
 				</div>
-			</TitleGrid>
-			<form onSubmit={(e) => handleAddTask(e)}>
-				<TaskInput
-					type="text"
-					value={taskInput}
-					onChange={(e) => setTaskInput(e.target.value)}
-				/>
-				<AddTaskButton type="submit" id="add-btn">
-					Add
-				</AddTaskButton>
-			</form>
+			</div>
+			{renderInput()}
 			{renderSettings()}
 
 			<DragDropContext onDragEnd={onDragEnd}>
@@ -189,54 +211,13 @@ const App = () => {
 							ref={provided.innerRef}
 							style={getListStyle(snapshot.isDraggingOver)}
 						>
-							{tasks.map((t, index) => (
-								<Draggable
-									key={t.id}
-									draggableId={t.id}
-									index={index}
-								>
-									{(provided, snapshot) => (
-										<div
-											ref={provided.innerRef}
-											{...provided.draggableProps}
-											{...provided.dragHandleProps}
-											style={getItemStyle(
-												snapshot.isDragging,
-												provided
-													.draggableProps
-													.style
-											)}
-										>
-											<Task
-												key={t.id}
-												task={t}
-												onComplete={(id) =>
-													handleCompleteTask(
-														id
-													)
-												}
-												onDelete={(id) =>
-													setTasks(
-														tasks.filter(
-															(
-																t
-															) =>
-																t.id !==
-																id
-														)
-													)
-												}
-											/>
-										</div>
-									)}
-								</Draggable>
-							))}
+							{renderTasks()}
 							{provided.placeholder}
 						</div>
 					)}
 				</Droppable>
 			</DragDropContext>
-		</AppContainer>
+		</div>
 	);
 };
 
