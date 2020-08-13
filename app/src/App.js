@@ -75,20 +75,16 @@ const App = () => {
 			}
 		});
 		setTasks(newTasks);
-		sortTasks();
+		if (autoSort) {
+			sortTasks();
+		}
 	};
 
 	const sortTasks = () => {
 		let newTasks = [...tasks];
-		if (autoSort) {
-			newTasks.sort((a, b) => {
-				return a.completed === b.completed
-					? 0
-					: a.completed
-					? 1
-					: -1;
-			});
-		}
+		newTasks.sort((a, b) => {
+			return a.completed === b.completed ? 0 : a.completed ? 1 : -1;
+		});
 		setTasks(newTasks);
 	};
 
@@ -126,10 +122,18 @@ const App = () => {
 	//== Render ==\\
 
 	const renderSettings = () => {
+		const handleToggleSort = () => {
+			setAutoSort(!autoSort);
+			if (!autoSort) {
+				sortTasks();
+			}
+		};
+
 		if (showSettings) {
 			return (
 				<SettingsPane
-					onToggle={() => setAutoSort(!autoSort)}
+					sortToggled={autoSort}
+					onToggleSort={() => handleToggleSort()}
 					onSortDirection={(s) =>
 						setAddFrom(s === 'top' ? 'top' : 'bottom')
 					}

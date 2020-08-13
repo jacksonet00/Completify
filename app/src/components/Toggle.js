@@ -1,22 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import '../styles/toggle.css';
 
 const Toggle = (props) => {
-	const [toggled, setToggled] = useState(true);
-
-	const handleToggle = () => {
-		props.onToggle(!toggled);
-		setToggled(!toggled);
-	};
-
 	return (
 		<div className="toggle-container">
 			<label className="toggle-control">
 				<input
 					type="checkbox"
 					id="toggle"
-					checked={toggled}
-					onChange={() => handleToggle()}
+					checked={props.toggled}
+					onChange={props.onToggle}
 				/>
 				<span className="control"></span>
 			</label>

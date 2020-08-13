@@ -51,7 +51,10 @@ const SettingsPane = (props) => {
 			<Title>Settings</Title>
 			<Container2>
 				<ToggleLabel>Auto Sort</ToggleLabel>
-				<Toggle onToggle={(status) => props.onToggle(status)} />
+				<Toggle
+					toggled={props.sortToggled}
+					onToggle={props.onToggleSort}
+				/>
 			</Container2>
 			<Container2>
 				<SelectLabel htmlFor="sort-direction-select">
