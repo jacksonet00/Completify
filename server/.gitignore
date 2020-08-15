@@ -1,8 +1,6 @@
 # dependencies
 /node_modules
 
-# dev
-.env
 
 # misc
 .DS_Store
