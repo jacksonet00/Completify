@@ -9,9 +9,7 @@ import './styles/app.css';
 const App = () => {
 	//== State ==\\
 
-	const [tasks, setTasks] = useState(
-		JSON.parse(localStorage.getItem('tasks')) || []
-	);
+	const [tasks, setTasks] = useState([]);
 	const [taskInput, setTaskInput] = useState('');
 	const [autoSort, setAutoSort] = useState(true);
 	const [addFrom, setAddFrom] = useState('bottom');
@@ -26,8 +24,10 @@ const App = () => {
 	}, []);
 
 	useEffect(() => {
-		localStorage.setItem('tasks', JSON.stringify(tasks));
-	}, [tasks]);
+		fetch(`http://localhost:3002/tasks`)
+			.then((res) => res.json())
+			.then((data) => setTasks(data));
+	}, []);
 
 	//== Event Handlers ==\\
 
@@ -138,7 +138,7 @@ const App = () => {
 
 	const renderTasks = () => {
 		return tasks.map((t, index) => (
-			<Draggable key={t.id} draggableId={t.id} index={index}>
+			<Draggable key={t.id} draggableId={`${t.id}`} index={index}>
 				{(provided, snapshot) => (
 					<div
 						ref={provided.innerRef}
